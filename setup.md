@@ -17,6 +17,7 @@ neo4j-admin database info
 dbms.default_database=recommendations.db
 dbms.allow_upgrade=true
 dbms.directories.import=import
+# activate plugins: First copy plugin files to mnt/var/lib/neo4j/plugins
 dbms.security.procedures.unrestricted=apoc.*,apoc.algo.*, algo.*
 dbms.security.procedures.allowlist=apoc.coll.*,apoc.load.*,apoc.*
 
