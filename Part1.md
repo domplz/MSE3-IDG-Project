@@ -45,9 +45,77 @@ CREATE (u)-[:RATED {rating: 4.0, timestamp: timestamp()}]->(m)
 ## Fast and the Furious (46335) 4*
 MATCH (u:User {userId: '99999999999'})
 MATCH (m:Movie {movieId: '46335'})
-CREATE (u)-[:RATED {rating: 4.0, timestamp: timestamp()}]->(m)
+CREATE (u)-[:RATED {rating: 6.8, timestamp: timestamp()}]->(m)
 
 
 ##  get rated movies of user
 MATCH (u:User {userId: '99999999999'})-[:RATED]->(m:Movie)
+RETURN u, m
+
+## get users which also rated a movie similar to me using EUCLIDEAN DISTANCE
+MATCH (me:User {userId: '99999999999'})-[myRating:RATED]->(m:Movie)<-[otherRating:RATED]-(other:User)
+WITH me, other, COLLECT(myRating.rating) AS myRatings,COLLECT(otherRating.rating) AS othersRating, COLLECT(m) AS movies
+WHERE other <> me
+WITH me, other, gds.similarity.euclideanDistance(myRatings, othersRating) AS similarity,myRatings, othersRating, movies
+ORDER BY similarity ASC
+LIMIT 5
+RETURN other, movies, similarity, myRatings, othersRating
+
+
+## get users which also rated a movie similar to me using EUCLIDEAN
+## desc in that case
+MATCH (me:User {userId: '99999999999'})-[myRating:RATED]->(m:Movie)<-[otherRating:RATED]-(other:User)
+WITH me, other, COLLECT(myRating.rating) AS myRatings,COLLECT(otherRating.rating) AS othersRating, COLLECT(m) AS movies
+WHERE other <> me
+WITH me, other, gds.similarity.euclidean(myRatings, othersRating) AS similarity,myRatings, othersRating, movies
+ORDER BY similarity DESC
+LIMIT 5
+RETURN other, movies, similarity, myRatings, othersRating
+
+
+## get users which also rated a movie similar to me using PEARSON
+## desc in that case
+MATCH (me:User {userId: '99999999999'})-[myRating:RATED]->(m:Movie)<-[otherRating:RATED]-(other:User)
+WITH me, other, COLLECT(myRating.rating) AS myRatings,COLLECT(otherRating.rating) AS othersRating, COLLECT(m) AS movies
+WHERE other <> me
+WITH me, other, gds.similarity.pearson(myRatings, othersRating) AS similarity,myRatings, othersRating, movies
+ORDER BY similarity DESC
+LIMIT 5
+RETURN other, movies, similarity, myRatings, othersRating
+
+
+## get users which also rated a movie similar to me using OVERLAP
+## desc in that case
+MATCH (me:User {userId: '99999999999'})-[myRating:RATED]->(m:Movie)<-[otherRating:RATED]-(other:User)
+WITH me, other, COLLECT(myRating.rating) AS myRatings,COLLECT(otherRating.rating) AS othersRating, COLLECT(m) AS movies
+WHERE other <> me
+WITH me, other, gds.similarity.overlap(myRatings, othersRating) AS similarity,myRatings, othersRating, movies
+ORDER BY similarity DESC
+LIMIT 5
+RETURN other, movies, similarity, myRatings, othersRating
+
+## get users which also rated a movie similar to me using JACCARD
+## desc in that case
+MATCH (me:User {userId: '99999999999'})-[myRating:RATED]->(m:Movie)<-[otherRating:RATED]-(other:User)
+WITH me, other, COLLECT(myRating.rating) AS myRatings,COLLECT(otherRating.rating) AS othersRating, COLLECT(m) AS movies
+WHERE other <> me
+WITH me, other, gds.similarity.jaccard(myRatings, othersRating) AS similarity,myRatings, othersRating, movies
+ORDER BY similarity DESC
+LIMIT 5
+RETURN other, movies, similarity, myRatings, othersRating
+
+
+## get users which also rated a movie similar to me using COSINE
+MATCH (me:User {userId: '99999999999'})-[myRating:RATED]->(m:Movie)<-[otherRating:RATED]-(other:User)
+WITH me, other, COLLECT(myRating.rating) AS myRatings,COLLECT(otherRating.rating) AS othersRating, COLLECT(m) AS movies
+WHERE other <> me
+WITH me, other, gds.similarity.cosine(myRatings, othersRating) AS similarity,myRatings, othersRating, movies
+ORDER BY similarity ASC
+LIMIT 5
+RETURN other, movies, similarity, myRatings, othersRating
+
+## with those user ids we can see which movies the other user also rated highly
+## get all users the user rated with >8.0
+MATCH (u:User {userId: '<similar user id>'})-[r:RATED]->(m:Movie)
+where r.rating > 8.0
 RETURN u, m

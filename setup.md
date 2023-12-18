@@ -23,3 +23,6 @@ dbms.security.procedures.allowlist=apoc.coll.*,apoc.load.*,apoc.*
 
 # container restart
 neo4j stop
+
+# dump db
+neo4j-admin database dump recommendations.db
