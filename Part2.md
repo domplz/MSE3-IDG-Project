@@ -69,65 +69,63 @@ FROM \<SocialNetwork\>
 WHERE { ?s ?p ?o }
 
 # PART B
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX lib: <http://www.lib.org/schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-SELECT (COUNT(?interaction) as ?totalLikesDislikes)
+SELECT ?post (COUNT(?action) AS ?qty)
 WHERE {
-  ?person (foaf:likes|lib:dislikes) ?post .
-  ?post lib:hasTag ?tag .
-  ?tag lib:content "U2" OR ?tag lib:content "Queen" .
-  ?interaction ?likeDislikeProperty ?post .
+  {
+    ?post rdf:type foaf:Post .
+    ?post lib:hasTag ?tag1 .
+    ?tag1 rdf:type foaf:Tag .
+    ?tag1 lib:content "U2" .
+    ?action lib:likes ?post .
+  }
+  UNION
+  {
+    ?post rdf:type foaf:Post .
+    ?post lib:hasTag ?tag2 .
+    ?tag2 rdf:type foaf:Tag .
+    ?tag2 lib:content "Queen" .
+    ?action lib:dislikes ?post .
+  }
 }
+GROUP BY ?post
 
 # Part C
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
 PREFIX lib: <http://www.lib.org/schema#>
-
-SELECT ?name ?lastName ?gender
-WHERE {
-  ?follower foaf:follows ?person .
-  ?person (foaf:likes|lib:dislikes) ?post .
-  ?post lib:hasTag ?tag .
-  ?tag lib:content "U2" .
-  ?follower (foaf:likes|lib:dislikes) ?otherPost .
-  FILTER (
-    (COUNT(DISTINCT ?otherPost) >= 2) || 
-    EXISTS { 
-      ?follower foaf:likes ?u2Post .
-      ?u2Post lib:hasTag ?u2Tag .
-      ?u2Tag lib:content "U2" 
-    }
-  )
-  ?person foaf:firstName ?name .
-  ?person foaf:lastName ?lastName .
-  ?person foaf:gender ?gender .
-}
-GROUP BY ?name ?lastName ?gender
-HAVING COUNT(DISTINCT ?otherPost) >= 2 || COUNT(DISTINCT ?u2Post) >= 1
-
-## ODER
-
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX lib: <http://www.lib.org/schema#>
 
-SELECT ?name ?lastName ?gender
+SELECT ?fn ?ln ?g
 WHERE {
-  ?follower foaf:follows ?person .
-  ?person (foaf:likes|lib:dislikes) ?post .
-  ?post lib:hasTag ?tag .
-  ?tag lib:content "U2" .
-  ?follower (foaf:likes|lib:dislikes) ?otherPost .
-  FILTER (
-    (COUNT(DISTINCT ?otherPost) >= 2) || 
-    EXISTS { 
-      ?follower foaf:likes ?u2Post .
-      ?u2Post lib:hasTag ?u2Tag .
-      ?u2Tag lib:content "U2" 
+  ?follower lib:follows ?target .
+  ?target lib:dislikes ?post1 .
+  ?post1 rdf:type foaf:Post .
+  ?post1 lib:hasTag ?tag1 .
+  ?tag1 rdf:type foaf:Tag .
+  ?tag1 lib:content "U2" .
+  {
+    SELECT ?follower (COUNT(DISTINCT ?post) AS ?dislikedPostsCount)
+    WHERE {
+      ?follower lib:follows ?target2 .
+      ?target2 lib:dislikes ?post .
+      ?post rdf:type foaf:Post .
     }
-  )
-  ?person foaf:firstName ?name .
-  ?person foaf:lastName ?lastName .
-  ?person foaf:gender ?gender .
+    GROUP BY ?follower
+    HAVING (?dislikedPostsCount >= 2)
+  }
+  UNION
+  {
+    ?follower lib:likes ?post2 .
+    ?post2 rdf:type foaf:Post .
+    ?post2 lib:hasTag ?tag2 .
+    ?tag2 rdf:type foaf:Tag .
+    ?tag2 lib:content "U2" .
+  }
+  ?follower foaf:firstName ?fn .
+  ?follower foaf:lastName ?ln .
+  OPTIONAL { ?follower lib:gender ?g }
 }
-GROUP BY ?name ?lastName ?gender
