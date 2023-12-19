@@ -1,3 +1,6 @@
+### dump file link
+https://cloud.technikum-wien.at/s/cr2e8mKFQxHEyrr
+
 ### execute command for newfile_01.csv (x10 for every file)
 LOAD CSV WITH HEADERS FROM "file:///newfile_01.csv" AS row
 MERGE (u:User {userId: substring(row.userID, 2)}) WITH *
