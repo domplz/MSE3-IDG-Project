@@ -42,7 +42,7 @@ MATCH (u:User {userId: '99999999999'})
 MATCH (m:Movie {movieId: '3785'})
 CREATE (u)-[:RATED {rating: 4.0, timestamp: timestamp()}]->(m)
 
-## Fast and the Furious (46335) 4*
+## Fast and the Furious (46335) 6.8*
 MATCH (u:User {userId: '99999999999'})
 MATCH (m:Movie {movieId: '46335'})
 CREATE (u)-[:RATED {rating: 6.8, timestamp: timestamp()}]->(m)
@@ -106,11 +106,12 @@ RETURN other, movies, similarity, myRatings, othersRating
 
 
 ## get users which also rated a movie similar to me using COSINE
+## desc in that case
 MATCH (me:User {userId: '99999999999'})-[myRating:RATED]->(m:Movie)<-[otherRating:RATED]-(other:User)
 WITH me, other, COLLECT(myRating.rating) AS myRatings,COLLECT(otherRating.rating) AS othersRating, COLLECT(m) AS movies
 WHERE other <> me
 WITH me, other, gds.similarity.cosine(myRatings, othersRating) AS similarity,myRatings, othersRating, movies
-ORDER BY similarity ASC
+ORDER BY similarity DESC
 LIMIT 5
 RETURN other, movies, similarity, myRatings, othersRating
 
