@@ -1,6 +1,6 @@
 # Part 1
-Dump file link
-https://cloud.technikum-wien.at/s/cr2e8mKFQxHEyrr
+Dump file: [https://cloud.technikum-wien.at/s/cr2e8mKFQxHEyrr](https://cloud.technikum-wien.at/s/cr2e8mKFQxHEyrr)
+Github link: [https://github.com/domplz/MSE3-IDG-Project](https://github.com/domplz/MSE3-IDG-Project)
 
 ## Preparation
 
@@ -23,7 +23,7 @@ MATCH (n:User)
 WHERE n.name = 'Dominik & Ruben'
 RETURN n
 ```
-#### or
+**or**
 ```
 MATCH (u:User)
 WHERE u.userId = '99999999999'
@@ -79,8 +79,7 @@ MATCH (u:User {userId: '99999999999'})-[:RATED]->(m:Movie)
 RETURN u, m
 ```
 
-<br>
-<br>
+<div style="page-break-after: always;"></div>
 
 ### Get users which also rated a movie similar to me using EUCLIDEAN DISTANCE
 ```
@@ -115,8 +114,7 @@ LIMIT 5
 RETURN other, movies, similarity, myRatings, othersRating
 ```
 
-<br>
-<br>
+<div style="page-break-after: always;"></div>
 
 ### Get users which also rated a movie similar to me using OVERLAP <br/> Desc in that case
 ```
