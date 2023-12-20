@@ -1,4 +1,4 @@
-# Part 1
+# Part 1 - Group: Dominik Pilz and Ruben Luputan
 Dump file: [https://cloud.technikum-wien.at/s/cr2e8mKFQxHEyrr](https://cloud.technikum-wien.at/s/cr2e8mKFQxHEyrr)
 Github link: [https://github.com/domplz/MSE3-IDG-Project](https://github.com/domplz/MSE3-IDG-Project)
 
