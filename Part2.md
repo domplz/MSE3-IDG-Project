@@ -1,17 +1,24 @@
-## Download VirtualBox and Sparql.ova
-Follow instructions of
+# Part 2
+
+## Preparation
+
+### Download VirtualBox and Sparql.ova
+Follow the instructions from
 https://moodle.technikum-wien.at/pluginfile.php/2031623/mod_folder/content/0/Lesson-5-RDF-and-SPARQL.pdf?forcedownload=1
 
-## open http://localhost:9090/sparql
+### Open the interface 
+navigate to http://localhost:9090/sparql
 
-# PART A:
+## Tasks
 
-## create \<SocialNetwork\> graph
+### Prerequisites
+
+#### Create \<SocialNetwork\> graph
 ```CREATE GRAPH <SocialNetwork>```
 
-## insert provided data
+#### Insert the provided data
 ```
-INSERT DATA {GRAPH \<SocialNetwork> {
+INSERT DATA {GRAPH <SocialNetwork> {
   <http://example.neo4j/john> <http://www.lib.org/schema#firstName> "John" .
   <http://example.neo4j/john> <http://www.lib.org/schema#lastName> "Cook" .
   <http://example.neo4j/john> <http://www.lib.org/schema#gender> "male" .
@@ -64,15 +71,17 @@ INSERT DATA {GRAPH \<SocialNetwork> {
   <http://example.neo4j/peter> <http://www.lib.org/schema#likes> <http://example.neo4j/p2> .
 }}
 ```
-## check inserted triplets
+
+#### Check the inserted triplets
 ```
 SELECT *
 FROM <SocialNetwork>
 WHERE { ?s ?p ?o }
 ```
 
-# PART B
+### Queries
 
+#### Query: “Total number of likes given to posts mentioning U2, or dislikes to posts mentioning Queen”
 ```
 PREFIX lib: <http://www.lib.org/schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -98,8 +107,8 @@ WHERE {
 }
 GROUP BY ?post
 ```
-# Part C
 
+#### Query: “Name, last name and gender of people who follow people who dislike at least 2 different posts, or who liked at least one post that mentions U2.”
 ```
 PREFIX lib: <http://www.lib.org/schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
